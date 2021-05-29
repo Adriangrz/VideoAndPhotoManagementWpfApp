@@ -18,14 +18,13 @@ namespace VideoAndPhotoManagementWpfApp
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        public string CategoryName { get; set; } = null;
         private MainWindowViewModel _mainWindowViewModel = new MainWindowViewModel();
 
         public MainWindow()
         {
             InitializeComponent();
             _mainWindowViewModel.CategoryViewModels = LoadCategories();
-            _mainWindowViewModel.PictureViewModels = new ObservableCollection<PictureViewModel>();
+            _mainWindowViewModel.PictureViewModels = LoadPicturies();
             _mainWindowViewModel.MovieViewModels = new ObservableCollection<MovieViewModel>();
             DataContext = _mainWindowViewModel;
         }
@@ -39,6 +38,22 @@ namespace VideoAndPhotoManagementWpfApp
             }
             );
             return new ObservableCollection<CategoryViewModel>(categories);
+        }
+
+        private ObservableCollection<PictureViewModel> LoadPicturies()
+        {
+            if (_mainWindowViewModel.CategoryName is not null)
+            {
+                using var context = new VideoAndPhotoManagementContext();
+                var pictures = context.Pictures.Where(x => x.Category.CategoryName == _mainWindowViewModel.CategoryName.CategoryName).Select(x => new PictureViewModel
+                {
+                    PictureId = x.PictureId,
+                    Title = x.Title
+                }
+                );
+                return new ObservableCollection<PictureViewModel>(pictures);
+            }
+            return null;
         }
 
         private void ShowElement_Click(object sender, RoutedEventArgs e)
@@ -99,12 +114,30 @@ namespace VideoAndPhotoManagementWpfApp
             bool? result = dlg.ShowDialog();
             if (result == false)
                 return;
-            var path = dlg.FileName;
+            var pathSource = dlg.FileName;
+            var pathMyDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var pathDestination = Path.Combine(pathMyDocuments, $@"VideoAndPhotoApp\{_mainWindowViewModel.CategoryName.CategoryName}\{Path.GetFileName(pathSource)}");
+            File.Move(pathSource, pathDestination);
+            using var context = new VideoAndPhotoManagementContext();
+            Picture picture = new Picture()
+            {
+                Title = Path.GetFileNameWithoutExtension(pathDestination),
+                Path = pathDestination
+            };
+            picture.Category = context.Categories.Where(x => x.CategoryName == _mainWindowViewModel.CategoryName.CategoryName).SingleOrDefault();
+            context.Add(picture);
+            context.SaveChanges();
+            PictureViewModel pictureViewModel = new PictureViewModel();
+            pictureViewModel.PictureId = context.Pictures.Where(x => x.Title == Path.GetFileNameWithoutExtension(pathDestination)).Select(x => x.PictureId).SingleOrDefault();
+            pictureViewModel.Title = picture.Title;
+            _mainWindowViewModel.PictureViewModels.Add(pictureViewModel);
         }
 
-        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void CategoryListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            return;
+            _mainWindowViewModel.CategorySelect = true;
+            _mainWindowViewModel.PictureViewModels = LoadPicturies();
         }
+
     }
 }
