@@ -1,7 +1,6 @@
 ﻿using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -66,12 +65,5 @@ namespace VideoAndPhotoManagementWpfApp
             movieWindowViewModel.LengthOfMovie = ts.TotalSeconds.ToString();
             timer.Start();
         }
-    }
-    public class MovieWindowViewModel : INotifyPropertyChanged
-    {
-        public string MoviePath { get; set; }
-        public string LengthOfMovie { get; set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }
