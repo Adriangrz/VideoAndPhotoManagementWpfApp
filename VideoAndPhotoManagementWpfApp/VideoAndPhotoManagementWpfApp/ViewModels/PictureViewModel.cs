@@ -6,5 +6,6 @@ namespace VideoAndPhotoManagementWpfApp
     {
         public Guid PictureId { get; set; }
         public string Title { get; set; }
+        public string Path { get; set; }
     }
 }

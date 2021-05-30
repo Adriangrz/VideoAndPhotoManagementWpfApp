@@ -47,7 +47,7 @@
                                     <ColumnDefinition Width = "Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0" ToolTip="{Binding CategoryName}" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" TextTrimming="WordEllipsis" Text="{Binding CategoryName}" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" Foreground="White"/>
-                                <Button Grid.Column="1" Tag="{Binding CategoryName}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="DeleteCategoryButton_Click">Usuń</Button>
+                                <Button Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="DeleteCategoryButton_Click">Usuń</Button>
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
@@ -69,24 +69,26 @@
                     <Button Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="AddPictureButton_Click" Visibility="{Binding CategorySelect, Converter={StaticResource BooleanToVisibilityCustomConverter}}">Dodaj</Button>
                 </Grid>
             </Border>
-            <ListView Grid.Row="1" ItemsSource="{Binding PictureViewModels}">
-                <ListView.ItemTemplate>
+            <ItemsControl Grid.Row="1" ItemsSource="{Binding PictureViewModels}">
+                <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width = "8*" />
-                                <ColumnDefinition Width = "2*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="{Binding Title}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                <Button Grid.Column="1" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF">Pokaż</Button>
-                                <Button Grid.Column="1" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF">Przenieś</Button>
-                                <Button Grid.Column="1" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF">Usuń</Button>
-                            </StackPanel>
-                        </Grid>
+                        <Border BorderThickness="0 1 0 1" BorderBrush="#CC0078D7">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width = "8*" />
+                                    <ColumnDefinition Width = "auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" ToolTip="{Binding Title}" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" TextTrimming="WordEllipsis" Text="{Binding Title}" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <Button Grid.Column="1" Margin="2,2,2,2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="ShowPictureButton_Click">Pokaż</Button>
+                                    <Button Grid.Column="1" Margin="0,2,0,2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="MovePictureButton_Click">Przenieś</Button>
+                                    <Button Grid.Column="1" Margin="2,2,2,2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="DeletePictureButton_Click">Usuń</Button>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
                     </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </Grid>
         <Grid Grid.Column="1" Grid.Row="1">
             <Grid.RowDefinitions>
@@ -106,18 +108,20 @@
             <ListView Grid.Row="1">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width = "8*" />
-                                <ColumnDefinition Width = "2*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0"/>
-                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                <Button Grid.Column="1" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}">Pokaż</Button>
-                                <Button Grid.Column="1" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}">Przenieś</Button>
-                                <Button Grid.Column="1" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}">Usuń</Button>
-                            </StackPanel>
-                        </Grid>
+                        <Border BorderThickness="0 1 0 1" BorderBrush="#f2f2f2" Background="#CC0078D7">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width = "8*" />
+                                    <ColumnDefinition Width = "2*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0"/>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <Button Grid.Column="1" Margin="10,10,10,10" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}">Pokaż</Button>
+                                    <Button Grid.Column="1" Margin="0,10,0,10" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}">Przenieś</Button>
+                                    <Button Grid.Column="1" Margin="10,10,10,10" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}">Usuń</Button>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
