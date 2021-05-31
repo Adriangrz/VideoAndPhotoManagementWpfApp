@@ -22,6 +22,7 @@ namespace VideoAndPhotoManagementWpfApp
     public partial class PlayMovieWindow : MetroWindow
     {
         private MovieWindowViewModel movieWindowViewModel = new MovieWindowViewModel();
+        private bool userIsDraggingSlider = false;
         DispatcherTimer timer;
         public PlayMovieWindow(string moviePath)
         {
@@ -30,13 +31,18 @@ namespace VideoAndPhotoManagementWpfApp
             movieWindowViewModel.MoviePath = new Uri(moviePath).ToString();
             DataContext = movieWindowViewModel;
             timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(500);
+            timer.Interval = TimeSpan.FromMilliseconds(1000);
             timer.Tick += new EventHandler(Timer_Tick);
         }
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            sliderSeek.Value = movieMediaElement.Position.TotalSeconds;
+            if ((movieMediaElement.Source != null) && (movieMediaElement.NaturalDuration.HasTimeSpan) && (!userIsDraggingSlider))
+            {
+                sliderSeek.Minimum = 0;
+                sliderSeek.Maximum = movieMediaElement.NaturalDuration.TimeSpan.TotalSeconds;
+                sliderSeek.Value = movieMediaElement.Position.TotalSeconds;
+            }
         }
 
         private void Play_Click(object sender, RoutedEventArgs e)
@@ -56,14 +62,28 @@ namespace VideoAndPhotoManagementWpfApp
 
         private void SliderSeek_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            movieMediaElement.Position = TimeSpan.FromSeconds(sliderSeek.Value);
+            if (!userIsDraggingSlider)
+            {
+                movieMediaElement.Position = TimeSpan.FromSeconds(sliderSeek.Value);
+            }
         }
 
         private void MovieMediaElement_MediaOpened(object sender, RoutedEventArgs e)
         {
             TimeSpan ts = movieMediaElement.NaturalDuration.TimeSpan;
-            movieWindowViewModel.LengthOfMovie = ts.TotalSeconds.ToString();
+            sliderSeek.Maximum = ts.TotalSeconds;
             timer.Start();
+        }
+
+        private void sliProgress_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
+        {
+            userIsDraggingSlider = true;
+        }
+
+        private void sliProgress_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        {
+            userIsDraggingSlider = false;
+            movieMediaElement.Position = TimeSpan.FromSeconds(sliderSeek.Value);
         }
     }
 }

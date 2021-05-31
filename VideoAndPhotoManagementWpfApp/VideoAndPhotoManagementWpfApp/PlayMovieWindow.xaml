@@ -13,11 +13,11 @@
             <RowDefinition Height = "*" />
             <RowDefinition Height = "0.5*" />
         </Grid.RowDefinitions>
-        <MediaElement Name="movieMediaElement" Grid.Row="0" LoadedBehavior="Manual" UnloadedBehavior="Manual" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Source="{Binding MoviePath}" MediaOpened="MovieMediaElement_MediaOpened"/>
+        <MediaElement Name="movieMediaElement" Grid.Row="0" LoadedBehavior="Manual" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Source="{Binding MoviePath}" MediaOpened="MovieMediaElement_MediaOpened"/>
         <StackPanel Grid.Row="1" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Width="100" Height="50" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Click="Play_Click" Background="#FF0066FF">Odtwórz</Button>
-            <Button Width="100" Height="50" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Click="Pause_Click" Background="#FF0066FF">Zatrzymaj</Button>
+            <Button Margin="2" Width="100" Height="50" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Click="Play_Click" Background="#FF0066FF">Odtwórz</Button>
+            <Button Margin="2" Width="100" Height="50" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Click="Pause_Click" Background="#FF0066FF">Zatrzymaj</Button>
         </StackPanel>
-        <Slider Name="sliderSeek" Grid.Row="2"  HorizontalAlignment="Stretch" VerticalAlignment="Center" ValueChanged="SliderSeek_ValueChanged" Maximum="{Binding LengthOfMovie}"/>
+        <Slider Name="sliderSeek" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" ValueChanged="SliderSeek_ValueChanged" Thumb.DragStarted="sliProgress_DragStarted" Thumb.DragCompleted="sliProgress_DragCompleted" Focusable="False"/>
     </Grid>
 </mah:MetroWindow>

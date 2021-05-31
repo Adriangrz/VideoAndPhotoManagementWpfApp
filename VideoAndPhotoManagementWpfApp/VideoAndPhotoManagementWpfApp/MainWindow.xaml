@@ -99,33 +99,32 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width = "8*" />
-                        <ColumnDefinition Width = "Auto" />
+                        <ColumnDefinition Width = "auto" />
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Text="Filmy" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" Foreground="White"/>
-                    <Button Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Visibility="{Binding CategorySelect, Converter={StaticResource BooleanToVisibilityCustomConverter}}">Dodaj</Button>
+                    <Button Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="AddMovieButton_Click" Visibility="{Binding CategorySelect, Converter={StaticResource BooleanToVisibilityCustomConverter}}">Dodaj</Button>
                 </Grid>
             </Border>
-            <ListView Grid.Row="1">
-                <ListView.ItemTemplate>
+            <ItemsControl Grid.Row="1" ItemsSource="{Binding MovieViewModels}">
+                <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border BorderThickness="0 1 0 1" BorderBrush="#f2f2f2" Background="#CC0078D7">
+                        <Border BorderThickness="0 1 0 1" BorderBrush="#CC0078D7">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width = "8*" />
-                                    <ColumnDefinition Width = "2*" />
+                                    <ColumnDefinition Width = "auto" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0"/>
+                                <TextBlock Grid.Column="0" ToolTip="{Binding Title}" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" TextTrimming="WordEllipsis" Text="{Binding Title}" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold"/>
                                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <Button Grid.Column="1" Margin="10,10,10,10" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}">Pokaż</Button>
-                                    <Button Grid.Column="1" Margin="0,10,0,10" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}">Przenieś</Button>
-                                    <Button Grid.Column="1" Margin="10,10,10,10" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}">Usuń</Button>
+                                    <Button Grid.Column="1" Margin="2,2,2,2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="ShowMovieButton_Click">Pokaż</Button>
+                                    <Button Grid.Column="1" Margin="0,2,0,2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="MoveMovieButton_Click">Przenieś</Button>
+                                    <Button Grid.Column="1" Margin="2,2,2,2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="DeleteMovieButton_Click">Usuń</Button>
                                 </StackPanel>
                             </Grid>
                         </Border>
                     </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </Grid>
-        <!--<Button Width="100" Height="50" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Click="ShowElement_Click" BorderBrush="White">Pokaż</Button>-->
     </Grid>
 </mah:MetroWindow>
