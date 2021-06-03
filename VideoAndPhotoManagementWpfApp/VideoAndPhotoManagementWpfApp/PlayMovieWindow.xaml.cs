@@ -21,23 +21,27 @@ namespace VideoAndPhotoManagementWpfApp
     /// </summary>
     public partial class PlayMovieWindow : MetroWindow
     {
-        private MovieWindowViewModel movieWindowViewModel = new MovieWindowViewModel();
-        private bool userIsDraggingSlider = false;
+        private MovieWindowViewModel _movieWindowViewModel = new MovieWindowViewModel();
+        private bool _userIsDraggingSlider = false;
         DispatcherTimer timer;
-        public PlayMovieWindow(string moviePath)
+        public PlayMovieWindow()
         {
             InitializeComponent();
             
-            movieWindowViewModel.MoviePath = new Uri(moviePath).ToString();
-            DataContext = movieWindowViewModel;
+            DataContext = _movieWindowViewModel;
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(1000);
             timer.Tick += new EventHandler(Timer_Tick);
         }
 
+        public void SetMovie(string moviePath)
+        {
+            _movieWindowViewModel.MoviePath = new Uri(moviePath).ToString();
+        }
+
         private void Timer_Tick(object sender, EventArgs e)
         {
-            if ((movieMediaElement.Source != null) && (movieMediaElement.NaturalDuration.HasTimeSpan) && (!userIsDraggingSlider))
+            if ((movieMediaElement.Source != null) && (movieMediaElement.NaturalDuration.HasTimeSpan) && (!_userIsDraggingSlider))
             {
                 sliderSeek.Minimum = 0;
                 sliderSeek.Maximum = movieMediaElement.NaturalDuration.TimeSpan.TotalSeconds;
@@ -62,7 +66,7 @@ namespace VideoAndPhotoManagementWpfApp
 
         private void SliderSeek_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (!userIsDraggingSlider)
+            if (!_userIsDraggingSlider)
             {
                 movieMediaElement.Position = TimeSpan.FromSeconds(sliderSeek.Value);
             }
@@ -77,12 +81,12 @@ namespace VideoAndPhotoManagementWpfApp
 
         private void sliProgress_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
         {
-            userIsDraggingSlider = true;
+            _userIsDraggingSlider = true;
         }
 
         private void sliProgress_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
-            userIsDraggingSlider = false;
+            _userIsDraggingSlider = false;
             movieMediaElement.Position = TimeSpan.FromSeconds(sliderSeek.Value);
         }
     }

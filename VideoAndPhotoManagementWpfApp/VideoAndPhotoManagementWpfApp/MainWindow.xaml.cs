@@ -10,69 +10,62 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
+using VideoAndPhotoManagementWpfApp.DatatbaseManagement;
+using VideoAndPhotoManagementWpfApp.DisplayElement;
+using VideoAndPhotoManagementWpfApp.FileManagement;
 
 namespace VideoAndPhotoManagementWpfApp
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        private MainWindowViewModel _mainWindowViewModel = new MainWindowViewModel();
+        private MainWindowViewModel _mainWindowViewModel;
         public string MoveToCategory { get; set; } = null;
 
-        public MainWindow()
+        public MainWindow(MainWindowViewModel mainWindowViewModel)
         {
             InitializeComponent();
-            _mainWindowViewModel.CategoryViewModels = LoadCategories();
-            _mainWindowViewModel.PictureViewModels = LoadPicturies();
-            _mainWindowViewModel.MovieViewModels = LoadMovies();
+            _mainWindowViewModel = mainWindowViewModel;
+            LoadCategories();
+            LoadPicturies();
+            LoadMovies();
             DataContext = _mainWindowViewModel;
         }
 
-        private ObservableCollection<CategoryViewModel> LoadCategories()
+        private async void LoadCategories()
         {
-            using var context = new VideoAndPhotoManagementContext();
-            var categories = context.Categories.Select(x => new CategoryViewModel
+            try
             {
-                CategoryName = x.CategoryName
+                _mainWindowViewModel.CategoryViewModels = await DatabaseManagementClass.LoadCategories();
             }
-            );
-            return new ObservableCollection<CategoryViewModel>(categories);
+            catch
+            {
+                await this.ShowMessageAsync("Uwaga", "Coś poszło nie tak");
+            }
         }
 
-        private ObservableCollection<MovieViewModel> LoadMovies()
+        private async void LoadMovies()
         {
-            if (_mainWindowViewModel.CategoryName is not null)
+            try
             {
-                using var context = new VideoAndPhotoManagementContext();
-                var movies = context.Movies.Where(x => x.Category.CategoryName == _mainWindowViewModel.CategoryName.CategoryName).Select(x => new MovieViewModel
-                {
-                    MovieId = x.MovieId,
-                    Title = x.Title,
-                    Path = x.Path
-                }
-                );
-                return new ObservableCollection<MovieViewModel>(movies);
+                _mainWindowViewModel.MovieViewModels = await DatabaseManagementClass.LoadMovies(_mainWindowViewModel.CategoryName);
             }
-            return null;
+            catch
+            {
+                await this.ShowMessageAsync("Uwaga", "Coś poszło nie tak");
+            }
         }
 
-        private ObservableCollection<PictureViewModel> LoadPicturies()
+        private async void LoadPicturies()
         {
-            if (_mainWindowViewModel.CategoryName is not null)
+            try
             {
-                using var context = new VideoAndPhotoManagementContext();
-                var pictures = context.Pictures.Where(x => x.Category.CategoryName == _mainWindowViewModel.CategoryName.CategoryName).Select(x => new PictureViewModel
-                {
-                    PictureId = x.PictureId,
-                    Title = x.Title,
-                    Path = x.Path
-                }
-                );
-                return new ObservableCollection<PictureViewModel>(pictures);
+                _mainWindowViewModel.PictureViewModels =  await DatabaseManagementClass.LoadPicturies(_mainWindowViewModel.CategoryName);
             }
-            return null;
+            catch
+            {
+                await this.ShowMessageAsync("Uwaga", "Coś poszło nie tak");
+            }
         }
 
         private async void AddCategoryButton_Click(object sender, RoutedEventArgs e)
@@ -92,23 +85,9 @@ namespace VideoAndPhotoManagementWpfApp
                     await this.ShowMessageAsync("Uwaga", "Dana kategoria już istnieje");
                     return;
                 }
-                var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                var mainFolder = Path.Combine(path, $@"VideoAndPhotoApp\{categoryName}");
-                Directory.CreateDirectory(mainFolder);
-                var pictureFolder = Path.Combine(path, $@"VideoAndPhotoApp\{categoryName}\Zdjęcia");
-                Directory.CreateDirectory(pictureFolder);
-                var movieFolder = Path.Combine(path, $@"VideoAndPhotoApp\{categoryName}\Filmy");
-                Directory.CreateDirectory(movieFolder);
-                using var context = new VideoAndPhotoManagementContext();
-                var category = new Category()
-                {
-                    CategoryName = categoryName
-                };
-                context.Add(category);
-                context.SaveChanges();
-                CategoryViewModel categoryViewModel = new CategoryViewModel();
-                categoryViewModel.CategoryName = categoryName;
-                _mainWindowViewModel.CategoryViewModels.Add(categoryViewModel);
+                FileManagementClass.CreateCategoryStructure(categoryName);
+                await DatabaseManagementClass.AddCategory(categoryName);
+                _mainWindowViewModel.AddCategory(categoryName);
             }
             catch
             {
@@ -120,18 +99,11 @@ namespace VideoAndPhotoManagementWpfApp
         {
             try
             {
-                CategoryViewModel categoryViewModelRow = ((Button)sender).DataContext as CategoryViewModel;
-                string categoryNameToDelete = categoryViewModelRow.CategoryName;
-                var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                var folder = Path.Combine(path, $@"VideoAndPhotoApp\{categoryNameToDelete}");
-                DirectoryInfo di = new DirectoryInfo(folder);
-                di.Delete(true);
-                using var context = new VideoAndPhotoManagementContext();
-                Category category = context.Categories.Where(x => x.CategoryName == categoryNameToDelete).SingleOrDefault();
-                context.Categories.Remove(category);
-                context.SaveChanges();
-                int categoryViewModelId = _mainWindowViewModel.CategoryViewModels.IndexOf(_mainWindowViewModel.CategoryViewModels.Where(x => x.CategoryName == categoryNameToDelete).SingleOrDefault());
-                _mainWindowViewModel.CategoryViewModels.RemoveAt(categoryViewModelId);
+                CategoryViewModel categoryViewModel = ((Button)sender).DataContext as CategoryViewModel;
+                string categoryNameToDelete = categoryViewModel.CategoryName;
+                FileManagementClass.RemoveCategoryStructure(categoryNameToDelete);
+                await DatabaseManagementClass.DeleteCategory(categoryNameToDelete);
+                _mainWindowViewModel.RemoveCategory(categoryViewModel);
             }
             catch
             {
@@ -143,32 +115,14 @@ namespace VideoAndPhotoManagementWpfApp
         {
             try
             {
-                OpenFileDialog dlg = new OpenFileDialog();
-
-                dlg.DefaultExt = ".png";
-                dlg.Filter = "JPEG Files (*.jpeg)|*.jpeg|PNG Files (*.png)|*.png|JPG Files (*.jpg)|*.jpg|GIF Files (*.gif)|*.gif|All files (*.*)|*.*";
-
-                bool? result = dlg.ShowDialog();
-                if (result == false)
+                var pathSource = FileManagementClass.DisplayFileDialog(".png", "JPEG Files (*.jpeg)|*.jpeg|PNG Files (*.png)|*.png|JPG Files (*.jpg)|*.jpg|All files (*.*)|*.*");
+                if (pathSource == null)
                     return;
-                var pathSource = dlg.FileName;
-                var pathMyDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                var pathDestination = Path.Combine(pathMyDocuments, $@"VideoAndPhotoApp\{_mainWindowViewModel.CategoryName.CategoryName}\Zdjęcia\{Path.GetFileName(pathSource)}");
-                File.Move(pathSource, pathDestination);
-                using var context = new VideoAndPhotoManagementContext();
-                Picture picture = new Picture()
-                {
-                    Title = Path.GetFileNameWithoutExtension(pathDestination),
-                    Path = pathDestination
-                };
-                picture.Category = context.Categories.Where(x => x.CategoryName == _mainWindowViewModel.CategoryName.CategoryName).SingleOrDefault();
-                context.Add(picture);
-                context.SaveChanges();
-                PictureViewModel pictureViewModel = new PictureViewModel();
-                pictureViewModel.PictureId = context.Pictures.Where(x => x.Title == Path.GetFileNameWithoutExtension(pathDestination)).Select(x => x.PictureId).SingleOrDefault();
-                pictureViewModel.Title = picture.Title;
-                pictureViewModel.Path = picture.Path;
-                _mainWindowViewModel.PictureViewModels.Add(pictureViewModel);
+                var pathDestination = FileManagementClass.GetPathDestination(pathSource, _mainWindowViewModel.CategoryName.CategoryName, "Zdjęcia");
+                FileManagementClass.FileMove(pathSource, pathDestination);
+                await DatabaseManagementClass.AddPicture(Path.GetFileNameWithoutExtension(pathDestination), pathDestination, _mainWindowViewModel.CategoryName.CategoryName);
+                Picture picture = await DatabaseManagementClass.GetPicture(Path.GetFileNameWithoutExtension(pathDestination));
+                _mainWindowViewModel.AddPicture(picture);
             }
             catch
             {
@@ -179,15 +133,13 @@ namespace VideoAndPhotoManagementWpfApp
         private void CategoryListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             _mainWindowViewModel.CategorySelect = true;
-            _mainWindowViewModel.PictureViewModels = LoadPicturies();
-            _mainWindowViewModel.MovieViewModels = LoadMovies();
+            LoadPicturies();
+            LoadMovies();
         }
 
         private void ShowPictureButton_Click(object sender, RoutedEventArgs e)
         {
-            PictureViewModel categoryViewModelRow = ((Button)sender).DataContext as PictureViewModel;
-            ShowPictureWindow showPictureWindow = new ShowPictureWindow(categoryViewModelRow.Path);
-            showPictureWindow.ShowDialog();
+            DisplayElementClass.DisplayPicture(((Button)sender).DataContext as PictureViewModel, this);
         }
 
         private async void DeletePictureButton_Click(object sender, RoutedEventArgs e)
@@ -195,12 +147,9 @@ namespace VideoAndPhotoManagementWpfApp
             try
             {
                 PictureViewModel pictureViewModel = ((Button)sender).DataContext as PictureViewModel;
-                File.Delete(pictureViewModel.Path);
-                _mainWindowViewModel.PictureViewModels.Remove(pictureViewModel);
-                using var context = new VideoAndPhotoManagementContext();
-                Picture picture = context.Pictures.Where(x => x.PictureId == pictureViewModel.PictureId).SingleOrDefault();
-                context.Pictures.Remove(picture);
-                context.SaveChanges();
+                FileManagementClass.FileDelete(pictureViewModel.Path);
+                await DatabaseManagementClass.DeletePicture(pictureViewModel.PictureId);
+                _mainWindowViewModel.RemovePicture(pictureViewModel);
             }
             catch
             {
@@ -218,16 +167,10 @@ namespace VideoAndPhotoManagementWpfApp
                 await customUserInputDialog.WaitUntilUnloadedAsync();
                 if (MoveToCategory is null)
                     return;
-                var pathMyDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                var pathDestination = Path.Combine(pathMyDocuments, $@"VideoAndPhotoApp\{MoveToCategory}\Zdjęcia\{Path.GetFileName(pictureViewModel.Path)}");
-                File.Move(pictureViewModel.Path, pathDestination);
-                using var context = new VideoAndPhotoManagementContext();
-                Picture picture = context.Pictures.SingleOrDefault(x => x.PictureId == pictureViewModel.PictureId);
-                picture.Path = pathDestination;
-                picture.Category = context.Categories.SingleOrDefault(x => x.CategoryName == MoveToCategory);
-                context.Update(picture);
-                context.SaveChanges();
-                _mainWindowViewModel.PictureViewModels.Remove(pictureViewModel);
+                var pathDestination = FileManagementClass.GetPathDestination(pictureViewModel.Path, MoveToCategory, "Zdjęcia");
+                FileManagementClass.FileMove(pictureViewModel.Path, pathDestination);
+                await DatabaseManagementClass.UpdatePicture(pictureViewModel.PictureId, pathDestination, MoveToCategory);
+                _mainWindowViewModel.RemovePicture(pictureViewModel);
             }
             catch
             {
@@ -237,9 +180,7 @@ namespace VideoAndPhotoManagementWpfApp
 
         private void ShowMovieButton_Click(object sender, RoutedEventArgs e)
         {
-            MovieViewModel movieViewModel = ((Button)sender).DataContext as MovieViewModel;
-            PlayMovieWindow playMovieWindow = new PlayMovieWindow(movieViewModel.Path);
-            playMovieWindow.ShowDialog();
+            DisplayElementClass.DisplayMovie(((Button)sender).DataContext as MovieViewModel, this);
         }
 
         private async void MoveMovieButton_Click(object sender, RoutedEventArgs e)
@@ -252,16 +193,10 @@ namespace VideoAndPhotoManagementWpfApp
                 await customUserInputDialog.WaitUntilUnloadedAsync();
                 if (MoveToCategory is null)
                     return;
-                var pathMyDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                var pathDestination = Path.Combine(pathMyDocuments, $@"VideoAndPhotoApp\{MoveToCategory}\Filmy\{Path.GetFileName(movieViewModel.Path)}");
-                File.Move(movieViewModel.Path, pathDestination);
-                using var context = new VideoAndPhotoManagementContext();
-                Movie movie = context.Movies.SingleOrDefault(x => x.MovieId == movieViewModel.MovieId);
-                movie.Path = pathDestination;
-                movie.Category = context.Categories.SingleOrDefault(x => x.CategoryName == MoveToCategory);
-                context.Update(movie);
-                context.SaveChanges();
-                _mainWindowViewModel.MovieViewModels.Remove(movieViewModel);
+                var pathDestination = FileManagementClass.GetPathDestination(movieViewModel.Path, MoveToCategory, "Filmy");
+                FileManagementClass.FileMove(movieViewModel.Path, pathDestination);
+                await DatabaseManagementClass.UpdateMovie(movieViewModel.MovieId, pathDestination, MoveToCategory);
+                _mainWindowViewModel.RemoveMovie(movieViewModel);
             }
             catch
             {
@@ -274,12 +209,9 @@ namespace VideoAndPhotoManagementWpfApp
             try
             {
                 MovieViewModel movieViewModel = ((Button)sender).DataContext as MovieViewModel;
-                File.Delete(movieViewModel.Path);
-                _mainWindowViewModel.MovieViewModels.Remove(movieViewModel);
-                using var context = new VideoAndPhotoManagementContext();
-                Movie movie = context.Movies.Where(x => x.MovieId == movieViewModel.MovieId).SingleOrDefault();
-                context.Movies.Remove(movie);
-                context.SaveChanges();
+                FileManagementClass.FileDelete(movieViewModel.Path);
+                await DatabaseManagementClass.DeleteMovie(movieViewModel.MovieId);
+                _mainWindowViewModel.RemoveMovie(movieViewModel);
             }
             catch
             {
@@ -291,32 +223,14 @@ namespace VideoAndPhotoManagementWpfApp
         {
             try
             {
-                OpenFileDialog dlg = new OpenFileDialog();
-
-                dlg.DefaultExt = ".mp4";
-                dlg.Filter = "MP4 Files (*.mp4)|*.mp4|All files (*.*)|*.*";
-
-                bool? result = dlg.ShowDialog();
-                if (result == false)
+                var pathSource = FileManagementClass.DisplayFileDialog(".mp4", "MP4 Files (*.mp4)|*.mp4|All files (*.*)|*.*");
+                if (pathSource == null)
                     return;
-                var pathSource = dlg.FileName;
-                var pathMyDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                var pathDestination = Path.Combine(pathMyDocuments, $@"VideoAndPhotoApp\{_mainWindowViewModel.CategoryName.CategoryName}\Filmy\{Path.GetFileName(pathSource)}");
-                File.Move(pathSource, pathDestination);
-                using var context = new VideoAndPhotoManagementContext();
-                Movie movie = new Movie()
-                {
-                    Title = Path.GetFileNameWithoutExtension(pathDestination),
-                    Path = pathDestination
-                };
-                movie.Category = context.Categories.Where(x => x.CategoryName == _mainWindowViewModel.CategoryName.CategoryName).SingleOrDefault();
-                context.Add(movie);
-                context.SaveChanges();
-                MovieViewModel movieViewModel = new MovieViewModel();
-                movieViewModel.MovieId = context.Movies.Where(x => x.Title == Path.GetFileNameWithoutExtension(pathDestination)).Select(x => x.MovieId).SingleOrDefault();
-                movieViewModel.Title = movie.Title;
-                movieViewModel.Path = movie.Path;
-                _mainWindowViewModel.MovieViewModels.Add(movieViewModel);
+                var pathDestination = FileManagementClass.GetPathDestination(pathSource, _mainWindowViewModel.CategoryName.CategoryName, "Filmy");
+                FileManagementClass.FileMove(pathSource, pathDestination);
+                await DatabaseManagementClass.AddMovie(Path.GetFileNameWithoutExtension(pathDestination), pathDestination, _mainWindowViewModel.CategoryName.CategoryName);
+                Movie movie = await DatabaseManagementClass.GetMovie(Path.GetFileNameWithoutExtension(pathDestination));
+                _mainWindowViewModel.AddMovie(movie);
             }
             catch
             {

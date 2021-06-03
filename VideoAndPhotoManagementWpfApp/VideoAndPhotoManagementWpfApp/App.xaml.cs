@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -13,5 +14,14 @@ namespace VideoAndPhotoManagementWpfApp
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            var sc = new ServiceCollection()
+                .AddSingleton<MainWindow>()
+                .AddSingleton<MainWindowViewModel>();
+            var sp = sc.BuildServiceProvider();
+            var mv = sp.GetService<MainWindow>();
+            mv.Show();
+        }
     }
 }

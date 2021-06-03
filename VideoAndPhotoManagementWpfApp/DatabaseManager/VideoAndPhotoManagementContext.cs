@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,7 +27,7 @@ namespace DatabaseManager
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=localhost,1455;Database=VideoAndPhotoManagementDatabase;User Id=sa;Password=7A!pp5!3Rent4!5Car7;");
+                optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["VideoAndPhotoManagementDatabase"].ConnectionString);
             }
         }
 
