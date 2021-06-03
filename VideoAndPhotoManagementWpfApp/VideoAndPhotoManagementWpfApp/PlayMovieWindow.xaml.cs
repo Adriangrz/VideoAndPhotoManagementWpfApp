@@ -23,15 +23,15 @@ namespace VideoAndPhotoManagementWpfApp
     {
         private MovieWindowViewModel _movieWindowViewModel = new MovieWindowViewModel();
         private bool _userIsDraggingSlider = false;
-        DispatcherTimer timer;
+        private DispatcherTimer _timer;
         public PlayMovieWindow()
         {
             InitializeComponent();
             
             DataContext = _movieWindowViewModel;
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(1000);
-            timer.Tick += new EventHandler(Timer_Tick);
+            _timer = new DispatcherTimer();
+            _timer.Interval = TimeSpan.FromMilliseconds(1000);
+            _timer.Tick += new EventHandler(Timer_Tick);
         }
 
         public void SetMovie(string moviePath)
@@ -76,7 +76,7 @@ namespace VideoAndPhotoManagementWpfApp
         {
             TimeSpan ts = movieMediaElement.NaturalDuration.TimeSpan;
             sliderSeek.Maximum = ts.TotalSeconds;
-            timer.Start();
+            _timer.Start();
         }
 
         private void sliProgress_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
