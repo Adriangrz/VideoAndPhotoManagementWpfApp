@@ -9,7 +9,7 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <mah:SplitButton Grid.Row="0" DisplayMemberPath="CategoryName" ItemsSource="{Binding CategoryViewModels}" SelectedItem="{Binding CategoryName}" HorizontalAlignment="Stretch" VerticalAlignment="Center"></mah:SplitButton>
+        <mah:SplitButton Grid.Row="0" DisplayMemberPath="CategoryName" SelectedIndex="0" ItemsSource="{Binding CategoryViewModels}" SelectedItem="{Binding CategoryName}" HorizontalAlignment="Stretch" VerticalAlignment="Center"></mah:SplitButton>
         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Grid.Row="1">
             <Button Margin="2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Click="ChooseButton_Click">Wybierz</Button>
             <Button Margin="2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="White" Foreground="Black" Click="CancelButton_Click">Anuluj</Button>

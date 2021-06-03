@@ -24,16 +24,20 @@ namespace VideoAndPhotoManagementWpfApp
     {
         private CustomUserInputDialogViewModel _customUserInputDialogViewModel = new CustomUserInputDialogViewModel();
         private MainWindow _mainWindow;
-        public CustomUserInputDialog(ObservableCollection<CategoryViewModel> categoryViewModels,MainWindow mainWindow)
+        public CustomUserInputDialog(List<CategoryViewModel> categoryViewModels,MainWindow mainWindow,CategoryViewModel categoryViewModel)
         {
             InitializeComponent();
-            _customUserInputDialogViewModel.CategoryViewModels = categoryViewModels;
+            categoryViewModels.Remove(categoryViewModel);
+            _customUserInputDialogViewModel.CategoryViewModels = new ObservableCollection<CategoryViewModel>(categoryViewModels);
+            _customUserInputDialogViewModel.CategoryName = new CategoryViewModel();
+            _customUserInputDialogViewModel.CategoryName.CategoryName = _customUserInputDialogViewModel.CategoryViewModels[0].CategoryName;
             _mainWindow = mainWindow;
             DataContext = _customUserInputDialogViewModel;
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
+            _mainWindow.MoveToCategory = null;
             _mainWindow.HideMetroDialogAsync(this);
         }
 

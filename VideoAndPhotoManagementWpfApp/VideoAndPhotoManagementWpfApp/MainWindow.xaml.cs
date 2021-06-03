@@ -162,7 +162,7 @@ namespace VideoAndPhotoManagementWpfApp
             try
             {
                 PictureViewModel pictureViewModel = ((Button)sender).DataContext as PictureViewModel;
-                CustomUserInputDialog customUserInputDialog = new CustomUserInputDialog(_mainWindowViewModel.CategoryViewModels, this);
+                CustomUserInputDialog customUserInputDialog = new CustomUserInputDialog(_mainWindowViewModel.CategoryViewModels.ToList(), this, _mainWindowViewModel.CategoryName);
                 await this.ShowMetroDialogAsync(customUserInputDialog);
                 await customUserInputDialog.WaitUntilUnloadedAsync();
                 if (MoveToCategory is null)
@@ -188,7 +188,7 @@ namespace VideoAndPhotoManagementWpfApp
             try
             {
                 MovieViewModel movieViewModel = ((Button)sender).DataContext as MovieViewModel;
-                CustomUserInputDialog customUserInputDialog = new CustomUserInputDialog(_mainWindowViewModel.CategoryViewModels, this);
+                CustomUserInputDialog customUserInputDialog = new CustomUserInputDialog(_mainWindowViewModel.CategoryViewModels.ToList(), this, _mainWindowViewModel.CategoryName);
                 await this.ShowMetroDialogAsync(customUserInputDialog);
                 await customUserInputDialog.WaitUntilUnloadedAsync();
                 if (MoveToCategory is null)
