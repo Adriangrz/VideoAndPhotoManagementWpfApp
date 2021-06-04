@@ -118,10 +118,15 @@ namespace VideoAndPhotoManagementWpfApp
                 var pathSource = FileManagementClass.DisplayFileDialog(".png", "JPEG Files (*.jpeg)|*.jpeg|PNG Files (*.png)|*.png|JPG Files (*.jpg)|*.jpg|All files (*.*)|*.*");
                 if (pathSource == null)
                     return;
+                if (_mainWindowViewModel.PictureViewModels.Any(x => x.Title == Path.GetFileNameWithoutExtension(pathSource)))
+                {
+                    await this.ShowMessageAsync("Uwaga", "Zdjęcie o tej nazwie już istnieje w danej kategorii");
+                    return;
+                }
                 var pathDestination = FileManagementClass.GetPathDestination(pathSource, _mainWindowViewModel.CategoryName.CategoryName, "Zdjęcia");
                 FileManagementClass.FileMove(pathSource, pathDestination);
                 await DatabaseManagementClass.AddPicture(Path.GetFileNameWithoutExtension(pathDestination), pathDestination, _mainWindowViewModel.CategoryName.CategoryName);
-                Picture picture = await DatabaseManagementClass.GetPicture(Path.GetFileNameWithoutExtension(pathDestination));
+                Picture picture = await DatabaseManagementClass.GetPicture(Path.GetFileNameWithoutExtension(pathDestination), _mainWindowViewModel.CategoryName.CategoryName);
                 _mainWindowViewModel.AddPicture(picture);
             }
             catch
@@ -167,6 +172,12 @@ namespace VideoAndPhotoManagementWpfApp
                 await customUserInputDialog.WaitUntilUnloadedAsync();
                 if (MoveToCategory is null)
                     return;
+                var picturesInCategory = await DatabaseManagementClass.LoadPicturies(_mainWindowViewModel.CategoryViewModels.FirstOrDefault(x=>x.CategoryName == MoveToCategory));
+                if (picturesInCategory.Any(x => x.Title == pictureViewModel.Title))
+                {
+                    await this.ShowMessageAsync("Uwaga", "Zdjęcie o tej nazwie już istnieje w danej kategorii");
+                    return;
+                }
                 var pathDestination = FileManagementClass.GetPathDestination(pictureViewModel.Path, MoveToCategory, "Zdjęcia");
                 FileManagementClass.FileMove(pictureViewModel.Path, pathDestination);
                 await DatabaseManagementClass.UpdatePicture(pictureViewModel.PictureId, pathDestination, MoveToCategory);
@@ -193,6 +204,12 @@ namespace VideoAndPhotoManagementWpfApp
                 await customUserInputDialog.WaitUntilUnloadedAsync();
                 if (MoveToCategory is null)
                     return;
+                var moviesInCategory = await DatabaseManagementClass.LoadMovies(_mainWindowViewModel.CategoryViewModels.FirstOrDefault(x => x.CategoryName == MoveToCategory));
+                if (moviesInCategory.Any(x => x.Title == movieViewModel.Title))
+                {
+                    await this.ShowMessageAsync("Uwaga", "Film o tej nazwie już istnieje w danej kategorii");
+                    return;
+                }
                 var pathDestination = FileManagementClass.GetPathDestination(movieViewModel.Path, MoveToCategory, "Filmy");
                 FileManagementClass.FileMove(movieViewModel.Path, pathDestination);
                 await DatabaseManagementClass.UpdateMovie(movieViewModel.MovieId, pathDestination, MoveToCategory);
@@ -226,10 +243,15 @@ namespace VideoAndPhotoManagementWpfApp
                 var pathSource = FileManagementClass.DisplayFileDialog(".mp4", "MP4 Files (*.mp4)|*.mp4|All files (*.*)|*.*");
                 if (pathSource == null)
                     return;
+                if (_mainWindowViewModel.MovieViewModels.Any(x => x.Title == Path.GetFileNameWithoutExtension(pathSource)))
+                {
+                    await this.ShowMessageAsync("Uwaga", "Film o tej nazwie już istnieje w danej kategorii");
+                    return;
+                }
                 var pathDestination = FileManagementClass.GetPathDestination(pathSource, _mainWindowViewModel.CategoryName.CategoryName, "Filmy");
                 FileManagementClass.FileMove(pathSource, pathDestination);
                 await DatabaseManagementClass.AddMovie(Path.GetFileNameWithoutExtension(pathDestination), pathDestination, _mainWindowViewModel.CategoryName.CategoryName);
-                Movie movie = await DatabaseManagementClass.GetMovie(Path.GetFileNameWithoutExtension(pathDestination));
+                Movie movie = await DatabaseManagementClass.GetMovie(Path.GetFileNameWithoutExtension(pathDestination), _mainWindowViewModel.CategoryName.CategoryName);
                 _mainWindowViewModel.AddMovie(movie);
             }
             catch

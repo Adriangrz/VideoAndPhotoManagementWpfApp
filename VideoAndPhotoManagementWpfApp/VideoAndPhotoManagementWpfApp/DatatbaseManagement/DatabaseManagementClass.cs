@@ -24,10 +24,10 @@ namespace VideoAndPhotoManagementWpfApp.DatatbaseManagement
             await context.AddAsync(picture);
             await context.SaveChangesAsync();
         }
-        public static async Task<Picture> GetPicture(string title)
+        public static async Task<Picture> GetPicture(string title, string category)
         {
             using var context = new VideoAndPhotoManagementContext();
-            return await context.Pictures.SingleOrDefaultAsync(x => x.Title == title);
+            return await context.Pictures.SingleOrDefaultAsync(x => x.Title == title && x.Category.CategoryName == category);
         }
         public static async Task DeletePicture(Guid pictureId)
         {
@@ -73,10 +73,10 @@ namespace VideoAndPhotoManagementWpfApp.DatatbaseManagement
             await context.AddAsync(movie);
             await context.SaveChangesAsync();
         }
-        public static async Task<Movie> GetMovie(string title)
+        public static async Task<Movie> GetMovie(string title, string category)
         {
             using var context = new VideoAndPhotoManagementContext();
-            return await context.Movies.SingleOrDefaultAsync(x => x.Title == title);
+            return await context.Movies.SingleOrDefaultAsync(x => x.Title == title && x.Category.CategoryName == category);
         }
         public static async Task DeleteMovie(Guid movieId)
         {

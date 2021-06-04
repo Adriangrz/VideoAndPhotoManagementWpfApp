@@ -5,6 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VideoAndPhotoManagementWpfApp"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
         xmlns:customConverters="clr-namespace:VideoAndPhotoManagementWpfApp.Converters"
         mc:Ignorable="d"
         Title="Aplikacja do zarządzania zdjęciami i filmami" Height="450" Width="800">
@@ -22,109 +23,113 @@
             <RowDefinition Height = "*" />
             <RowDefinition Height = "*" />
         </Grid.RowDefinitions>
-        <Border BorderThickness="1" BorderBrush="#f2f2f2" Grid.Column="0" Grid.RowSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="#CC0078D7">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height = "auto" />
-                    <RowDefinition Height = "5*" />
-                </Grid.RowDefinitions>
-                <Border Grid.Row="0" BorderThickness="0 0 0 1" BorderBrush="#f2f2f2">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width = "8*" />
-                            <ColumnDefinition Width = "auto" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="Kategorie" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" Foreground="White"/>
-                        <Button Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="AddCategoryButton_Click">Dodaj</Button>
-                    </Grid>
-                </Border>
-                <ListView Grid.Row="1" ItemsSource="{Binding CategoryViewModels}" SelectedItem="{Binding CategoryName}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0 0 1 0" BorderBrush="#CC0078D7" SelectionChanged="CategoryListView_SelectionChanged">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Background="#CC0078D7">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width = "8*" />
-                                    <ColumnDefinition Width = "Auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" ToolTip="{Binding CategoryName}" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" TextTrimming="WordEllipsis" Text="{Binding CategoryName}" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" Foreground="White"/>
-                                <Button Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="DeleteCategoryButton_Click">Usuń</Button>
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </Grid>
-        </Border>
+        <Grid Grid.Column="0" Grid.RowSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height = "auto" />
+                <RowDefinition Height = "5*" />
+            </Grid.RowDefinitions>
+            <Border Grid.Row="0" BorderThickness="1" BorderBrush="#f2f2f2" Background="#CC0078D7">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width = "8*" />
+                        <ColumnDefinition Width = "Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Kategorie" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" Foreground="White"/>
+                    <Button ToolTip="Dodaj" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="30" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="AddCategoryButton_Click">
+                        <fa:ImageAwesome VerticalAlignment="Center" Icon="PlusCircle" Foreground="White"/>
+                    </Button>
+                </Grid>
+            </Border>
+            <ListView Grid.Row="1" ItemsSource="{Binding CategoryViewModels}" BorderThickness="0 0 1 0" BorderBrush="#CC0078D7" SelectedItem="{Binding CategoryName}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="CategoryListView_SelectionChanged">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Background="#CC0078D7">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width = "8*" />
+                                <ColumnDefinition Width = "Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" ToolTip="{Binding CategoryName}" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" TextTrimming="WordEllipsis" Text="{Binding CategoryName}" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" Foreground="White"/>
+                            <Button Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="DeleteCategoryButton_Click">Usuń</Button>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
         <Grid Grid.Column="1" Grid.Row="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height = "auto" />
                 <RowDefinition Height = "5*" />
             </Grid.RowDefinitions>
-            <Border Grid.Row="0" BorderThickness="0 1 1 1" BorderBrush="#f2f2f2" Background="#CC0078D7">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width = "8*" />
-                        <ColumnDefinition Width = "auto" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="Zdjęcia" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" Foreground="White"/>
-                    <Button Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="AddPictureButton_Click" Visibility="{Binding CategorySelect, Converter={StaticResource BooleanToVisibilityCustomConverter}}">Dodaj</Button>
-                </Grid>
-            </Border>
-            <ItemsControl Grid.Row="1" ItemsSource="{Binding PictureViewModels}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border BorderThickness="0 1 0 1" BorderBrush="#CC0078D7">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width = "8*" />
-                                    <ColumnDefinition Width = "auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" ToolTip="{Binding Title}" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" TextTrimming="WordEllipsis" Text="{Binding Title}" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold"/>
-                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <Button Grid.Column="1" Margin="2,2,2,2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="ShowPictureButton_Click">Pokaż</Button>
-                                    <Button Grid.Column="1" Margin="0,2,0,2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="MovePictureButton_Click">Przenieś</Button>
-                                    <Button Grid.Column="1" Margin="2,2,2,2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="DeletePictureButton_Click">Usuń</Button>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            <Grid Grid.Row="0" Background="#CC0078D7">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width = "8*" />
+                    <ColumnDefinition Width = "Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Zdjęcia" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" Foreground="White"/>
+                <Button ToolTip="Dodaj" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="30" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="AddPictureButton_Click" Visibility="{Binding CategorySelect, Converter={StaticResource BooleanToVisibilityCustomConverter}}">
+                    <fa:ImageAwesome VerticalAlignment="Center" Icon="PlusCircle" Foreground="White"/>
+                </Button>
+            </Grid>
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <ItemsControl ItemsSource="{Binding PictureViewModels}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderThickness="0 1 0 1" BorderBrush="#CC0078D7">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width = "8*" />
+                                        <ColumnDefinition Width = "auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" ToolTip="{Binding Title}" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" TextTrimming="WordEllipsis" Text="{Binding Title}" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <Button Grid.Column="1" Margin="2,2,2,2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="ShowPictureButton_Click">Pokaż</Button>
+                                        <Button Grid.Column="1" Margin="0,2,0,2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="MovePictureButton_Click">Przenieś</Button>
+                                        <Button Grid.Column="1" Margin="2,2,2,2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="DeletePictureButton_Click">Usuń</Button>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
         </Grid>
         <Grid Grid.Column="1" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height = "auto" />
                 <RowDefinition Height = "5*" />
             </Grid.RowDefinitions>
-            <Border Grid.Row="0" BorderThickness="0 1 1 1" BorderBrush="#f2f2f2" Background="#CC0078D7">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width = "8*" />
-                        <ColumnDefinition Width = "auto" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="Filmy" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" Foreground="White"/>
-                    <Button Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="AddMovieButton_Click" Visibility="{Binding CategorySelect, Converter={StaticResource BooleanToVisibilityCustomConverter}}">Dodaj</Button>
-                </Grid>
-            </Border>
-            <ItemsControl Grid.Row="1" ItemsSource="{Binding MovieViewModels}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border BorderThickness="0 1 0 1" BorderBrush="#CC0078D7">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width = "8*" />
-                                    <ColumnDefinition Width = "auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" ToolTip="{Binding Title}" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" TextTrimming="WordEllipsis" Text="{Binding Title}" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold"/>
-                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <Button Grid.Column="1" Margin="2,2,2,2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="ShowMovieButton_Click">Pokaż</Button>
-                                    <Button Grid.Column="1" Margin="0,2,0,2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="MoveMovieButton_Click">Przenieś</Button>
-                                    <Button Grid.Column="1" Margin="2,2,2,2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="DeleteMovieButton_Click">Usuń</Button>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            <Grid Grid.Row="0" Background="#CC0078D7">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width = "8*" />
+                    <ColumnDefinition Width = "auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Filmy" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" Foreground="White"/>
+                <Button ToolTip="Dodaj" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="30" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="AddMovieButton_Click" Visibility="{Binding CategorySelect, Converter={StaticResource BooleanToVisibilityCustomConverter}}">
+                    <fa:ImageAwesome VerticalAlignment="Center" Icon="PlusCircle" Foreground="White"/>
+                </Button>
+            </Grid>
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <ItemsControl Grid.Row="1" ItemsSource="{Binding MovieViewModels}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderThickness="0 1 0 1" BorderBrush="#CC0078D7">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width = "8*" />
+                                        <ColumnDefinition Width = "auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" ToolTip="{Binding Title}" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" TextTrimming="WordEllipsis" Text="{Binding Title}" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <Button Grid.Column="1" Margin="2,2,2,2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="ShowMovieButton_Click">Pokaż</Button>
+                                        <Button Grid.Column="1" Margin="0,2,0,2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="MoveMovieButton_Click">Przenieś</Button>
+                                        <Button Grid.Column="1" Margin="2,2,2,2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="DeleteMovieButton_Click">Usuń</Button>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
         </Grid>
     </Grid>
 </mah:MetroWindow>
