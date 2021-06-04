@@ -35,8 +35,8 @@
                         <ColumnDefinition Width = "Auto" />
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Text="Kategorie" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" Foreground="White"/>
-                    <Button ToolTip="Dodaj" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="30" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="AddCategoryButton_Click">
-                        <fa:ImageAwesome VerticalAlignment="Center" Icon="PlusCircle" Foreground="White"/>
+                    <Button Margin="0" Background="#FF0066FF" ToolTip="Dodaj" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="30" Height="30" BorderBrush="{x:Null}" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Click="AddCategoryButton_Click">
+                        <fa:FontAwesome VerticalAlignment="Center" HorizontalAlignment="Center" Icon="PlusSquare" Foreground="White"/>
                     </Button>
                 </Grid>
             </Border>
@@ -66,8 +66,8 @@
                     <ColumnDefinition Width = "Auto" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="Zdjęcia" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" Foreground="White"/>
-                <Button ToolTip="Dodaj" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="30" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="AddPictureButton_Click" Visibility="{Binding CategorySelect, Converter={StaticResource BooleanToVisibilityCustomConverter}}">
-                    <fa:ImageAwesome VerticalAlignment="Center" Icon="PlusCircle" Foreground="White"/>
+                <Button Margin="0" Background="#FF0066FF" ToolTip="Dodaj" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="30" Height="30" BorderBrush="{x:Null}" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Click="AddPictureButton_Click" Visibility="{Binding CategorySelect, Converter={StaticResource BooleanToVisibilityCustomConverter}}">
+                    <fa:FontAwesome VerticalAlignment="Center" HorizontalAlignment="Center" Icon="PlusSquare" Foreground="White"/>
                 </Button>
             </Grid>
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -104,8 +104,8 @@
                     <ColumnDefinition Width = "auto" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="Filmy" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" Foreground="White"/>
-                <Button ToolTip="Dodaj" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="30" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="AddMovieButton_Click" Visibility="{Binding CategorySelect, Converter={StaticResource BooleanToVisibilityCustomConverter}}">
-                    <fa:ImageAwesome VerticalAlignment="Center" Icon="PlusCircle" Foreground="White"/>
+                <Button Margin="0" Background="#FF0066FF" ToolTip="Dodaj" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="30" Height="30" BorderBrush="{x:Null}" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Click="AddMovieButton_Click" Visibility="{Binding CategorySelect, Converter={StaticResource BooleanToVisibilityCustomConverter}}">
+                    <fa:FontAwesome VerticalAlignment="Center" HorizontalAlignment="Center" Icon="PlusSquare" Foreground="White"/>
                 </Button>
             </Grid>
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
