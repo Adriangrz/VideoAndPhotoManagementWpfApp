@@ -11,7 +11,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using VideoAndPhotoManagementWpfApp.DatatbaseManagement;
+using VideoAndPhotoManagementWpfApp.DatabaseManagement;
 using VideoAndPhotoManagementWpfApp.DisplayElement;
 using VideoAndPhotoManagementWpfApp.FileManagement;
 
@@ -167,6 +167,11 @@ namespace VideoAndPhotoManagementWpfApp
             try
             {
                 PictureViewModel pictureViewModel = ((Button)sender).DataContext as PictureViewModel;
+                if (_mainWindowViewModel.CategoryViewModels.Count() <= 1)
+                {
+                    await this.ShowMessageAsync("Uwaga", "Aby przenieść zdjęcie musisz posiadać więcej niż jedną kategorie");
+                    return;
+                }
                 CustomUserInputDialog customUserInputDialog = new CustomUserInputDialog(_mainWindowViewModel.CategoryViewModels.ToList(), this, _mainWindowViewModel.CategoryName);
                 await this.ShowMetroDialogAsync(customUserInputDialog);
                 await customUserInputDialog.WaitUntilUnloadedAsync();
@@ -199,6 +204,11 @@ namespace VideoAndPhotoManagementWpfApp
             try
             {
                 MovieViewModel movieViewModel = ((Button)sender).DataContext as MovieViewModel;
+                if (_mainWindowViewModel.CategoryViewModels.Count() <= 1)
+                {
+                    await this.ShowMessageAsync("Uwaga", "Aby przenieść film musisz posiadać więcej niż jedną kategorie");
+                    return;
+                }
                 CustomUserInputDialog customUserInputDialog = new CustomUserInputDialog(_mainWindowViewModel.CategoryViewModels.ToList(), this, _mainWindowViewModel.CategoryName);
                 await this.ShowMetroDialogAsync(customUserInputDialog);
                 await customUserInputDialog.WaitUntilUnloadedAsync();

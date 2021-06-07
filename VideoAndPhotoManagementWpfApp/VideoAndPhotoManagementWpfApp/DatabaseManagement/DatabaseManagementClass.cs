@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VideoAndPhotoManagementWpfApp.DatatbaseManagement
+namespace VideoAndPhotoManagementWpfApp.DatabaseManagement
 {
     public static class DatabaseManagementClass
     {

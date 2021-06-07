@@ -28,15 +28,15 @@
                 <RowDefinition Height = "auto" />
                 <RowDefinition Height = "5*" />
             </Grid.RowDefinitions>
-            <Border Grid.Row="0" BorderThickness="1" BorderBrush="#f2f2f2" Background="#CC0078D7">
-                <Grid>
+            <Border Grid.Row="0" BorderThickness="1" BorderBrush="#f2f2f2">
+                <Grid Background="#CC0078D7">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width = "8*" />
                         <ColumnDefinition Width = "Auto" />
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Text="Kategorie" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" Foreground="White"/>
                     <Button Margin="0" Background="#FF0066FF" ToolTip="Dodaj" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="30" Height="30" BorderBrush="{x:Null}" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Click="AddCategoryButton_Click">
-                        <fa:FontAwesome VerticalAlignment="Center" HorizontalAlignment="Center" Icon="PlusSquare" Foreground="White"/>
+                        <fa:FontAwesome VerticalAlignment="Center" HorizontalAlignment="Center" Icon="Plus" Foreground="White"/>
                     </Button>
                 </Grid>
             </Border>
@@ -49,7 +49,9 @@
                                 <ColumnDefinition Width = "Auto" />
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" ToolTip="{Binding CategoryName}" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" TextTrimming="WordEllipsis" Text="{Binding CategoryName}" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" Foreground="White"/>
-                            <Button Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="DeleteCategoryButton_Click">Usuń</Button>
+                            <Button Grid.Column="1" Margin="0" Background="#FF0066FF" ToolTip="Usuń" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" BorderBrush="{x:Null}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="30" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Click="DeleteCategoryButton_Click">
+                                <fa:FontAwesome VerticalAlignment="Center" HorizontalAlignment="Center" Icon="Times" Foreground="White"/>
+                            </Button>
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -67,7 +69,7 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="Zdjęcia" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" Foreground="White"/>
                 <Button Margin="0" Background="#FF0066FF" ToolTip="Dodaj" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="30" Height="30" BorderBrush="{x:Null}" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Click="AddPictureButton_Click" Visibility="{Binding CategorySelect, Converter={StaticResource BooleanToVisibilityCustomConverter}}">
-                    <fa:FontAwesome VerticalAlignment="Center" HorizontalAlignment="Center" Icon="PlusSquare" Foreground="White"/>
+                    <fa:FontAwesome VerticalAlignment="Center" HorizontalAlignment="Center" Icon="Plus" Foreground="White"/>
                 </Button>
             </Grid>
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -84,7 +86,9 @@
                                     <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                                         <Button Grid.Column="1" Margin="2,2,2,2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="ShowPictureButton_Click">Pokaż</Button>
                                         <Button Grid.Column="1" Margin="0,2,0,2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="MovePictureButton_Click">Przenieś</Button>
-                                        <Button Grid.Column="1" Margin="2,2,2,2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="DeletePictureButton_Click">Usuń</Button>
+                                        <Button Grid.Column="1" ToolTip="Usuń" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" BorderBrush="{x:Null}" Margin="2,2,2,2" Width="30" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="DeletePictureButton_Click">
+                                            <fa:FontAwesome VerticalAlignment="Center" HorizontalAlignment="Center" Icon="Times" Foreground="White"/>
+                                        </Button>
                                     </StackPanel>
                                 </Grid>
                             </Border>
@@ -105,7 +109,7 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="Filmy" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" Foreground="White"/>
                 <Button Margin="0" Background="#FF0066FF" ToolTip="Dodaj" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="30" Height="30" BorderBrush="{x:Null}" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Click="AddMovieButton_Click" Visibility="{Binding CategorySelect, Converter={StaticResource BooleanToVisibilityCustomConverter}}">
-                    <fa:FontAwesome VerticalAlignment="Center" HorizontalAlignment="Center" Icon="PlusSquare" Foreground="White"/>
+                    <fa:FontAwesome VerticalAlignment="Center" HorizontalAlignment="Center" Icon="Plus" Foreground="White"/>
                 </Button>
             </Grid>
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -122,7 +126,9 @@
                                     <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                                         <Button Grid.Column="1" Margin="2,2,2,2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="ShowMovieButton_Click">Pokaż</Button>
                                         <Button Grid.Column="1" Margin="0,2,0,2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="MoveMovieButton_Click">Przenieś</Button>
-                                        <Button Grid.Column="1" Margin="2,2,2,2" Width="60" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="DeleteMovieButton_Click">Usuń</Button>
+                                        <Button Grid.Column="1" ToolTip="Usuń" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" BorderBrush="{x:Null}" Margin="2,2,2,2" Width="30" Height="30" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Background="#FF0066FF" Click="DeleteMovieButton_Click">
+                                            <fa:FontAwesome VerticalAlignment="Center" HorizontalAlignment="Center" Icon="Times" Foreground="White"/>
+                                        </Button>
                                     </StackPanel>
                                 </Grid>
                             </Border>
