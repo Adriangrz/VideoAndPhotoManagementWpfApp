@@ -1,5 +1,6 @@
 ﻿<mah:MetroWindow x:Class="VideoAndPhotoManagementWpfApp.PlayMovieWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"        
         xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Height="450" Width="800" Closing="MetroWindow_Closing">
@@ -11,8 +12,12 @@
         </Grid.RowDefinitions>
         <MediaElement Name="movieMediaElement" Grid.Row="0" LoadedBehavior="Manual" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Source="{Binding MoviePath}" MediaOpened="MovieMediaElement_MediaOpened"/>
         <StackPanel Grid.Row="1" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Margin="2" Width="100" Height="50" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Click="Play_Click" Background="#FF0066FF">Odtwórz</Button>
-            <Button Margin="2" Width="100" Height="50" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Click="Pause_Click" Background="#FF0066FF">Zatrzymaj</Button>
+            <Button ToolTip="Odtwórz" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" Margin="2" Width="40" Height="40" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Click="Play_Click" Background="#FF0066FF" BorderBrush="{x:Null}">
+                <fa:FontAwesome VerticalAlignment="Center" HorizontalAlignment="Center" Icon="Play" Foreground="White"/>
+            </Button>
+            <Button ToolTip="Zatrzymaj" ToolTipService.ShowDuration="4000" ToolTipService.InitialShowDelay="1000" ToolTipService.BetweenShowDelay="15000" Margin="2" Width="40" Height="40" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Click="Pause_Click" Background="#FF0066FF" BorderBrush="{x:Null}">
+                <fa:FontAwesome VerticalAlignment="Center" HorizontalAlignment="Center" Icon="Stop" Foreground="White"/>
+            </Button>
         </StackPanel>
         <Slider Name="sliderSeek" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" ValueChanged="SliderSeek_ValueChanged" Thumb.DragStarted="sliProgress_DragStarted" Thumb.DragCompleted="sliProgress_DragCompleted" Focusable="False"/>
     </Grid>
