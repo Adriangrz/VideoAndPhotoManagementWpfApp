@@ -1,16 +1,11 @@
-﻿using DatabaseManager;
-using DatabaseManager.Models;
+﻿using DatabaseManager.Models;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
 using VideoAndPhotoManagementWpfApp.DatabaseManagement;
 using VideoAndPhotoManagementWpfApp.DisplayElement;
 using VideoAndPhotoManagementWpfApp.FileManagement;
@@ -85,9 +80,27 @@ namespace VideoAndPhotoManagementWpfApp
                     await this.ShowMessageAsync("Uwaga", "Dana kategoria już istnieje");
                     return;
                 }
-                FileManagementClass.CreateCategoryStructure(categoryName);
                 await DatabaseManagementClass.AddCategory(categoryName);
-                _mainWindowViewModel.AddCategory(categoryName);
+                try
+                {
+                    _mainWindowViewModel.AddCategory(categoryName);
+                }
+                catch
+                {
+                    await DatabaseManagementClass.DeleteCategory(categoryName);
+                    throw new Exception();
+                }
+                try
+                {
+                    FileManagementClass.CreateCategoryStructure(categoryName);
+                }
+                catch
+                {
+                    await DatabaseManagementClass.DeleteCategory(categoryName);
+                    _mainWindowViewModel.RemoveCategory(categoryName);
+                    await this.ShowMessageAsync("Uwaga", "Nie udało się wykonać tego zadania.Sprawdź czy folder o tej nazwie istnieje w folderze aplikacji na dysku.");
+                    return;
+                }
             }
             catch
             {
@@ -101,13 +114,31 @@ namespace VideoAndPhotoManagementWpfApp
             {
                 CategoryViewModel categoryViewModel = ((Button)sender).DataContext as CategoryViewModel;
                 string categoryNameToDelete = categoryViewModel.CategoryName;
-                FileManagementClass.RemoveCategoryStructure(categoryNameToDelete);
                 await DatabaseManagementClass.DeleteCategory(categoryNameToDelete);
-                _mainWindowViewModel.RemoveCategory(categoryViewModel);
+                try
+                {
+                    _mainWindowViewModel.RemoveCategory(categoryViewModel);
+                }
+                catch
+                {
+                    await DatabaseManagementClass.AddCategory(categoryNameToDelete);
+                    throw new Exception();
+                }
+                try
+                {
+                    FileManagementClass.RemoveCategoryStructure(categoryNameToDelete);
+                }
+                catch
+                {
+                    await DatabaseManagementClass.AddCategory(categoryNameToDelete);
+                    _mainWindowViewModel.AddCategory(categoryViewModel.CategoryName);
+                    await this.ShowMessageAsync("Uwaga", "Nie udało się wykonać tego zadania.Sprawdź czy folder o tej nazwie istnieje w folderze aplikacji na dysku.");
+                    return;
+                }
             }
             catch
             {
-                await this.ShowMessageAsync("Uwaga", "Coś poszło nie tak");
+                await this.ShowMessageAsync("Uwaga", "Nie udało się wykonać tego zadania.");
             }
         }
 
@@ -124,10 +155,28 @@ namespace VideoAndPhotoManagementWpfApp
                     return;
                 }
                 var pathDestination = FileManagementClass.GetPathDestination(pathSource, _mainWindowViewModel.CategoryName.CategoryName, "Zdjęcia");
-                FileManagementClass.FileMove(pathSource, pathDestination);
                 await DatabaseManagementClass.AddPicture(Path.GetFileNameWithoutExtension(pathDestination), pathDestination, _mainWindowViewModel.CategoryName.CategoryName);
                 Picture picture = await DatabaseManagementClass.GetPicture(Path.GetFileNameWithoutExtension(pathDestination), _mainWindowViewModel.CategoryName.CategoryName);
-                _mainWindowViewModel.AddPicture(picture);
+                try
+                {
+                    _mainWindowViewModel.AddPicture(picture);
+                }
+                catch
+                {
+                    await DatabaseManagementClass.DeletePicture(picture.PictureId);
+                    throw new Exception();
+                }
+                try
+                {
+                    FileManagementClass.FileMove(pathSource, pathDestination);
+                }
+                catch
+                {
+                    await DatabaseManagementClass.DeletePicture(picture.PictureId);
+                    _mainWindowViewModel.RemovePicture(picture);
+                    await this.ShowMessageAsync("Uwaga", "Nie udało się wykonać tego zadania.Sprawdź czy plik o tej nazwie istnieje w folderze na dysku.");
+                    return;
+                }
             }
             catch
             {
@@ -142,9 +191,16 @@ namespace VideoAndPhotoManagementWpfApp
             LoadMovies();
         }
 
-        private void ShowPictureButton_Click(object sender, RoutedEventArgs e)
+        private async void ShowPictureButton_Click(object sender, RoutedEventArgs e)
         {
-            DisplayElementClass.DisplayPicture(((Button)sender).DataContext as PictureViewModel, this);
+            try
+            {
+                DisplayElementClass.DisplayPicture(((Button)sender).DataContext as PictureViewModel, this);
+            }
+            catch
+            {
+                await this.ShowMessageAsync("Uwaga", "Coś poszło nie tak");
+            }
         }
 
         private async void DeletePictureButton_Click(object sender, RoutedEventArgs e)
@@ -152,9 +208,27 @@ namespace VideoAndPhotoManagementWpfApp
             try
             {
                 PictureViewModel pictureViewModel = ((Button)sender).DataContext as PictureViewModel;
-                FileManagementClass.FileDelete(pictureViewModel.Path);
                 await DatabaseManagementClass.DeletePicture(pictureViewModel.PictureId);
-                _mainWindowViewModel.RemovePicture(pictureViewModel);
+                try
+                {
+                    _mainWindowViewModel.RemovePicture(pictureViewModel);
+                }
+                catch
+                {
+                    await DatabaseManagementClass.AddPicture(pictureViewModel.Title, pictureViewModel.Path, _mainWindowViewModel.CategoryName.CategoryName);
+                    throw new Exception();
+                }
+                try
+                {
+                    FileManagementClass.FileDelete(pictureViewModel.Path);
+                }
+                catch
+                {
+                    await DatabaseManagementClass.AddPicture(pictureViewModel.Title, pictureViewModel.Path, _mainWindowViewModel.CategoryName.CategoryName);
+                    _mainWindowViewModel.AddPicture(pictureViewModel);
+                    await this.ShowMessageAsync("Uwaga", "Nie udało się wykonać tego zadania.Sprawdź czy plik o tej nazwie istnieje w folderze na dysku.");
+                    return;
+                }
             }
             catch
             {
@@ -184,9 +258,27 @@ namespace VideoAndPhotoManagementWpfApp
                     return;
                 }
                 var pathDestination = FileManagementClass.GetPathDestination(pictureViewModel.Path, MoveToCategory, "Zdjęcia");
-                FileManagementClass.FileMove(pictureViewModel.Path, pathDestination);
                 await DatabaseManagementClass.UpdatePicture(pictureViewModel.PictureId, pathDestination, MoveToCategory);
-                _mainWindowViewModel.RemovePicture(pictureViewModel);
+                try
+                {
+                    _mainWindowViewModel.RemovePicture(pictureViewModel);
+                }
+                catch
+                {
+                    await DatabaseManagementClass.UpdatePicture(pictureViewModel.PictureId, pictureViewModel.Path, _mainWindowViewModel.CategoryName.CategoryName);
+                    throw new Exception();
+                }
+                try
+                {
+                    FileManagementClass.FileMove(pictureViewModel.Path, pathDestination);
+                }
+                catch
+                {
+                    await DatabaseManagementClass.UpdatePicture(pictureViewModel.PictureId, pictureViewModel.Path, _mainWindowViewModel.CategoryName.CategoryName);
+                    _mainWindowViewModel.AddPicture(pictureViewModel);
+                    await this.ShowMessageAsync("Uwaga", "Nie udało się wykonać tego zadania.Sprawdź czy plik o tej nazwie istnieje w folderze na dysku.");
+                    return;
+                }
             }
             catch
             {
@@ -194,9 +286,16 @@ namespace VideoAndPhotoManagementWpfApp
             }
         }
 
-        private void ShowMovieButton_Click(object sender, RoutedEventArgs e)
+        private async void ShowMovieButton_Click(object sender, RoutedEventArgs e)
         {
-            DisplayElementClass.DisplayMovie(((Button)sender).DataContext as MovieViewModel, this);
+            try
+            {
+                DisplayElementClass.DisplayMovie(((Button)sender).DataContext as MovieViewModel, this);
+            }
+            catch
+            {
+                await this.ShowMessageAsync("Uwaga", "Coś poszło nie tak");
+            }
         }
 
         private async void MoveMovieButton_Click(object sender, RoutedEventArgs e)
@@ -221,9 +320,27 @@ namespace VideoAndPhotoManagementWpfApp
                     return;
                 }
                 var pathDestination = FileManagementClass.GetPathDestination(movieViewModel.Path, MoveToCategory, "Filmy");
-                FileManagementClass.FileMove(movieViewModel.Path, pathDestination);
                 await DatabaseManagementClass.UpdateMovie(movieViewModel.MovieId, pathDestination, MoveToCategory);
-                _mainWindowViewModel.RemoveMovie(movieViewModel);
+                try
+                {
+                    _mainWindowViewModel.RemoveMovie(movieViewModel);
+                }
+                catch
+                {
+                    await DatabaseManagementClass.UpdateMovie(movieViewModel.MovieId, movieViewModel.Path, _mainWindowViewModel.CategoryName.CategoryName);
+                    throw new Exception();
+                }
+                try
+                {
+                    FileManagementClass.FileMove(movieViewModel.Path, pathDestination);
+                }
+                catch
+                {
+                    await DatabaseManagementClass.UpdateMovie(movieViewModel.MovieId, movieViewModel.Path, _mainWindowViewModel.CategoryName.CategoryName);
+                    _mainWindowViewModel.AddMovie(movieViewModel);
+                    await this.ShowMessageAsync("Uwaga", "Nie udało się wykonać tego zadania.Sprawdź czy plik o tej nazwie istnieje w folderze na dysku.");
+                    return;
+                }
             }
             catch
             {
@@ -236,9 +353,27 @@ namespace VideoAndPhotoManagementWpfApp
             try
             {
                 MovieViewModel movieViewModel = ((Button)sender).DataContext as MovieViewModel;
-                FileManagementClass.FileDelete(movieViewModel.Path);
                 await DatabaseManagementClass.DeleteMovie(movieViewModel.MovieId);
-                _mainWindowViewModel.RemoveMovie(movieViewModel);
+                try
+                {
+                    _mainWindowViewModel.RemoveMovie(movieViewModel);
+                }
+                catch
+                {
+                    await DatabaseManagementClass.AddMovie(movieViewModel.Title, movieViewModel.Path, _mainWindowViewModel.CategoryName.CategoryName);
+                    throw new Exception();
+                }
+                try
+                {
+                    FileManagementClass.FileDelete(movieViewModel.Path);
+                }
+                catch
+                {
+                    await DatabaseManagementClass.AddMovie(movieViewModel.Title, movieViewModel.Path, _mainWindowViewModel.CategoryName.CategoryName);
+                    _mainWindowViewModel.AddMovie(movieViewModel);
+                    await this.ShowMessageAsync("Uwaga", "Nie udało się wykonać tego zadania.Sprawdź czy plik o tej nazwie istnieje w folderze na dysku.");
+                    return;
+                }
             }
             catch
             {
@@ -259,10 +394,28 @@ namespace VideoAndPhotoManagementWpfApp
                     return;
                 }
                 var pathDestination = FileManagementClass.GetPathDestination(pathSource, _mainWindowViewModel.CategoryName.CategoryName, "Filmy");
-                FileManagementClass.FileMove(pathSource, pathDestination);
                 await DatabaseManagementClass.AddMovie(Path.GetFileNameWithoutExtension(pathDestination), pathDestination, _mainWindowViewModel.CategoryName.CategoryName);
                 Movie movie = await DatabaseManagementClass.GetMovie(Path.GetFileNameWithoutExtension(pathDestination), _mainWindowViewModel.CategoryName.CategoryName);
-                _mainWindowViewModel.AddMovie(movie);
+                try
+                {
+                    _mainWindowViewModel.AddMovie(movie);
+                }
+                catch
+                {
+                    await DatabaseManagementClass.DeleteMovie(movie.MovieId);
+                    throw new Exception();
+                }
+                try
+                {
+                    FileManagementClass.FileMove(pathSource, pathDestination);
+                }
+                catch
+                {
+                    await DatabaseManagementClass.DeleteMovie(movie.MovieId);
+                    _mainWindowViewModel.RemoveMovie(movie);
+                    await this.ShowMessageAsync("Uwaga", "Nie udało się wykonać tego zadania.Sprawdź czy plik o tej nazwie istnieje w folderze na dysku.");
+                    return;
+                }
             }
             catch
             {

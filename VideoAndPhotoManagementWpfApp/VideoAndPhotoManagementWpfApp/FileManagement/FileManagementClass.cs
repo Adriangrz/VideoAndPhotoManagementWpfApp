@@ -1,10 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace VideoAndPhotoManagementWpfApp.FileManagement
 {
@@ -25,6 +21,8 @@ namespace VideoAndPhotoManagementWpfApp.FileManagement
             var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             var folder = Path.Combine(path, $@"VideoAndPhotoApp\{categoryName}");
             DirectoryInfo di = new DirectoryInfo(folder);
+            if (!di.Exists)
+                throw new Exception();
             di.Delete(true);
         }
         public static string DisplayFileDialog(string defaultExt,string filter)
@@ -47,10 +45,14 @@ namespace VideoAndPhotoManagementWpfApp.FileManagement
         }
         public static void FileMove(string pathSource, string pathDestination)
         {
+            if (!File.Exists(pathSource))
+                throw new Exception();
             File.Move(pathSource, pathDestination);
         }
         public static void FileDelete(string path)
         {
+            if (!File.Exists(path))
+                throw new Exception();
             File.Delete(path);
         }
     }
