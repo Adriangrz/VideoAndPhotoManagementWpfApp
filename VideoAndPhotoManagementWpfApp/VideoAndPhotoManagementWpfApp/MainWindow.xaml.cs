@@ -186,6 +186,11 @@ namespace VideoAndPhotoManagementWpfApp
 
         private void CategoryListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if(_mainWindowViewModel.CategoryName == null)
+            {
+                _mainWindowViewModel.CategorySelect = false;
+                return;
+            }
             _mainWindowViewModel.CategorySelect = true;
             LoadPicturies();
             LoadMovies();
